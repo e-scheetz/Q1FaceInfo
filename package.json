@@ -1,0 +1,11 @@
+{
+  "name": "Q1FaceInfo",
+  "version": "1.0.0",
+  "description": "* all",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tinify": "*"
+  }
+}

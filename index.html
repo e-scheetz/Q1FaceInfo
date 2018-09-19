@@ -14,6 +14,15 @@
 </head>
 
 <body class="backgroundGradientTwo" style="min-height: 100%; height: 100%">
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Error:</h4>
+      <p>Photo Too Small. Min resolution supported: 512x512px</p>
+    </div>
+    <div class="modal-footer">
+      <!-- <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a> -->
+    </div>
+  </div>
 
   <!--Header / Utility toolbar-->
   <div class="container-wrapper">
@@ -51,16 +60,42 @@
       </div>
     </div>
   </div>
-  <div class="container">
+  <div id='firstTimeViewer' class="container">
+    <div class="row valign-wrapper valign">
+      <div class="col s12 m12 l12 center-align">
+        <form>
+          <span>
+          Drag Photo to Upload or
+          </span>
+          <label for="upload_photo[]" style="color:black">Upload a Photo</label>
+          <input type="file" name="upload_photo" id="upload_photo" multiple>
 
+        </form>
+      </div>
+    </div>
+    <div class="row valign-wrapper" id='tmpOutput'>
+      <div class="col s12 m12 l12 valign center-align">
+        <canvas height="500" width="500" id="canvas"/>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row valign-wrapper">
+      <div id='carouselDiv' class="carousel col s12 m12 l12" hidden>
+
+      </div>
+    </div>
   </div>
   <!--JavaScript at end of body for optimized loading-->
-  <script type="text/javascript" src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
+  <!-- Old Code from attempt to tie node into the page operation -->
+  <!-- <script type="text/javascript" src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
   <script type="text/javascript" src="index.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script src="https://apis.google.com/js/api.js"></script>
+  <script type="text/javascript" src="lz-string-1.0.2.js"></script>
+  <!-- Old Code for Google API for gdrive -->
+  <!-- <script src="https://apis.google.com/js/api.js"></script> -->
   <!-- script for inoperable oauth for gdrive -->
   <!-- <script>
   /**

@@ -7,13 +7,20 @@
   <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!--Import materialize.css-->
-  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.css" media="screen,projection" />
   <link rel="stylesheet" href="index.css">
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/javascript" src="lz-string-1.0.2.js"></script>
+  <script type="text/javascript" src="index.js"></script>
 </head>
 
 <body class="backgroundGradientTwo" style="min-height: 100%; height: 100%">
+
+
   <div id="modal1" class="modal">
     <div class="modal-content">
       <h4>Error:</h4>
@@ -38,7 +45,7 @@
         <ul class="backgroundGradientOne">
           <li>
             <a class="btn-floating">
-            <i id="upload_btn" class="tooltipped material-icons" data-position="top" data-tooltip="Upload Photo">file_upload</i>
+            <i id="upload_btn" class="tooltipped material-icons" data-position="top" data-tooltip="Upload Photo">file_upload<input type="file" multiple hidden></i>
           </a>
           </li>
           <li>
@@ -84,16 +91,20 @@
       <div id='carouselDiv' class="carousel col s12 m12 l12" hidden>
 
       </div>
+
+      <!-- <div class="carousel">
+        <a class="carousel-item" href="#one!"><img src="https://placekitten.com/g/200/300"></a>
+        <a class="carousel-item" href="#two!"><img src="https://placekitten.com/g/200/300"></a>
+        <a class="carousel-item" href="#three!"><img src="https://placekitten.com/g/200/300"></a>
+        <a class="carousel-item" href="#four!"><img src="https://placekitten.com/g/200/300"></a>
+        <a class="carousel-item" href="#five!"><img src="https://placekitten.com/g/200/300"></a>
+      </div> -->
     </div>
   </div>
   <!--JavaScript at end of body for optimized loading-->
   <!-- Old Code from attempt to tie node into the page operation -->
   <!-- <script type="text/javascript" src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
-  <script type="text/javascript" src="index.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script type="text/javascript" src="lz-string-1.0.2.js"></script>
+
   <!-- Old Code for Google API for gdrive -->
   <!-- <script src="https://apis.google.com/js/api.js"></script> -->
   <!-- script for inoperable oauth for gdrive -->

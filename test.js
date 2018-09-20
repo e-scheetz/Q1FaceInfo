@@ -1,24 +1,66 @@
-function createConstraints(img, ctx){
-  let dI = {sx: 0, sy: 0, sWidth: 512, sHeight: 512, dx: 0, dy: 0, dWidth: 512, dHeight: 512}
-  if (img.height < 512 || img.width < 512){
-    var instance = M.Modal.getInstance(elem)
-    instance.open()
-    return `Image resolution of ${img.width}x${img.height}px. Min-resolution is 512x512px.`
-  } else if (img.height == 512 || img.width == 512){
-    drawConstrainedImage(dI, ctx)
-  } else {
-    if (img.width > img.height){
-      // code for if the image is wider than it is tall
-      results.sx = (img.width - img.height) / 2
-    } else {
-      // code for if the image is taller than it is wide
-      results.sy = (img.height - img.width) / 2
+let letterPool = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+let storedPhotos
+
+function addPhoto () {
+  getLocalStorage()
+  let newPhoto = getImageData()
+  let i = 0
+  while (`storedPhotos${letterPool[i]}` !== undefined){
+    if (`storedPhotos${letterPool[i+1]}` === undefined){
+      `storedPhotos${letterPool[i+1]}` = newPhoto
     }
-    drawConstrainedImage(dI, ctx)
   }
-  return dI
+  writeToLocalStorage()
 }
 
-function drawConstrainedImage(dI, ctx){
-  ctx.drawImage(img, dI.sx, dI.sy, dI.sWidth, dI.sHeight, dI.dx, dI.dy, dI.dWidth, dI.dHeight)
+function getImageData () {
+  let canvas = document.getElementById('canvas')
+  let ctx = canvas.getContext('2d')
+  let imageData = ctx.getImageData(0,0,512,512)
+  return imageData
 }
+
+function writeToLocalStorage () {
+
+}
+
+
+function getLocalStorage () {
+
+}
+
+
+
+
+//https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
+function getBase64Image(img) {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    var dataURL = canvas.toDataURL("image/png");
+
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+let img = localStorage.getItem('a')
+let decompressedPhoto = 'data:image/png;base64,' + LZString.decompress(img)
+let tmpOutput = document.getElementById('tmpOutput')
+tmpOutput.innerHTML += `<img src='${decompressedPhoto}'>`
+
+
+// write to carousel
+function writeToCarousel(){
+  let numArr = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"]
+  let carouselDiv = document.getElementById('carouselDiv')
+  carouselDiv.innerHTML = ""
+  for (let i = 0; i < storedPhotos.length){
+    carouselDiv.innerHTML += `<a class="carousel-item" href="#${numArr[i]}!"><img src="${storedPhotos[i]}"></a>`
+  }
+}
+
+
+// <a class="carousel-item" href="#one!"><img src="https://lorempixel.com/250/250/nature/1"></a>

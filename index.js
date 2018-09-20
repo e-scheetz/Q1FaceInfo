@@ -25,24 +25,23 @@ document.addEventListener('DOMContentLoaded', function() {
   let elems3 = document.querySelectorAll('.modal');
   let instances3 = M.Modal.init(elems3);
 
-  let elems4 = document.querySelectorAll('.carousel');
-  let instances4 = M.Carousel.init(elems4, {});
+  if (storedPhotos.length > 0){
+    let elems4 = document.querySelectorAll('.carousel');
+    let instances4 = M.Carousel.init(elems4, {});
+  }
 
   // event listeners
   let input = document.getElementById('upload_photo')
   input.addEventListener('change', handleFiles)
-  let upload = document.getElementById('upload_btn')
-  upload.addEventListener('change', handleFiles)
+  // let upload = document.getElementById('upload_btn')
+  // upload.addEventListener('change', handleFiles)
 });
-// $(document).ready(function(){
-//     $('.carousel').carousel();
-//   });
 
-// function that grabs and writes the image to canvas
 function handleFiles(e) {
   var ctx = document.getElementById('canvas').getContext('2d');
   var url = URL.createObjectURL(e.target.files[0]);
   var img = new Image();
+  img.src = url;
   img.onload = function() {
     let tmp = [img.height, img.width]
     let dI = createConstraints(tmp, ctx)
@@ -50,10 +49,12 @@ function handleFiles(e) {
       // modal activation with image too small then return to kill the function
     } else {
       ctx.drawImage(img, dI.sx, dI.sy, dI.sWidth, dI.sHeight, dI.dx, dI.dy, dI.dWidth, dI.dHeight)
+      document.getElementById('submitButton').hidden = false
     }
-    // ctx.drawImage(img, 0, 0, 512, 512)
   }
-  img.src = url;
+}
+
+function submitPhoto () {
   newPhoto()
   checkLocalStorage()
 }
@@ -108,6 +109,7 @@ function checkLocalStorage() {
     }
     storedPhotos = tmp
     populateCarousel()
+    updateProgress ()
   }
   return storedPhotos
 }
@@ -146,11 +148,27 @@ function unhideCarousel() {
 // NOTE: perhaps update a "progress bar" to show how much space is left in localStorage
 function newPhoto() {
   let img = document.getElementById('canvas').toDataURL()
-  let croppedDataURL = img.replace(/^data:image\/(png|jpg);base64,/, "")
-  let compressedImg = LZString.compress(croppedDataURL)
-  storedPhotos.push(compressedImg)
-  localStorage.setItem('storedPhotos', JSON.stringify(storedPhotos))
+  storedPhotos.push(img)
+  storeData()
   return storedPhotos
 }
 
+function storeData () {
+  let result = []
+  for (let i=0; i < storedPhotos.length; i++){
+    result.push(LZString.compress(storedPhotos[i].replace(/^data:image\/(png|jpg);base64,/, "")))
+  }
+  localStorage.setItem('storedPhotos', JSON.stringify(result))
+}
 //function to allow upload from toolbar
+
+// function to set % on progressBar and total used in amountStored
+function updateProgress () {
+  let storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2)/1048576).toFixed(2)
+  let percent = Math.floor(storageAmt/5*100)
+  let progressBar = document.getElementById('progressBar')
+  let amountStored = document.getElementById('amountStored')
+  progressBar.style.width = `${percent}%`
+  amountStored.innerText = `${storageAmt}MB`
+  // console.log(`${storageAmt}MB @ ${percent}%`)
+}

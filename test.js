@@ -64,3 +64,27 @@ function writeToCarousel(){
 
 
 // <a class="carousel-item" href="#one!"><img src="https://lorempixel.com/250/250/nature/1"></a>
+
+
+let _lsTotal = 0
+let _xLen
+let _x
+for (_x in localStorage) {
+  _xLen = ((localStorage[_x].length + _x.length) * 2)
+  _lsTotal += _xLen
+  console.log(_x.substr(0, 50) + " = " + (_xLen / 1024).toFixed(2) + " KB")
+}
+console.log("Total = " + (_lsTotal / 1024).toFixed(2) + " KB")
+
+
+
+//
+
+// separate function to store to localStorage
+function storeData () {
+  let result = []
+  for (let i=0; i < storedPhotos.length; i++){
+    result.push(LZString.compress(storedPhotos[i].replace(/^data:image\/(png|jpg);base64,/, "")))
+  }
+  localStorage.setItem('storedPhotos', JSON.stringify(result))
+}

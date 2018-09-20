@@ -34,9 +34,16 @@
   <!--Header / Utility toolbar-->
   <div class="container-wrapper">
 
-    <div class="row valign-wrapper valign center-align">
-      <div class="col s12 m12 l12 valign center-align backgroundGradientOne">
+    <div class="row valign-wrapper valign center-align backgroundGradientOne">
+      <div class="col s11 m11 l11 valign center-align">
         <h1 class="valign" style="padding-bottom: 20px; font-family: 'Amatic SC', cursive">Face Analysis</h1>
+      </div>
+      <div class="col s1 m1 l1">
+        <span>Photo Library</span>
+        <div class="progress">
+          <div id="progressBar" class="determinate"></div>
+        </div>
+        <span id="amountStored">0MB</span> out of 5MB
       </div>
       <div class="fixed-action-btn toolbar">
         <a class="btn-floating btn-large backgroundGradientOne">
@@ -45,7 +52,7 @@
         <ul class="backgroundGradientOne">
           <li>
             <a class="btn-floating">
-            <i id="upload_btn" class="tooltipped material-icons" data-position="top" data-tooltip="Upload Photo">file_upload<input type="file" multiple hidden></i>
+            <i id="upload_btn" class="tooltipped material-icons" data-position="top" data-tooltip="Upload Photo">file_upload</i>
           </a>
           </li>
           <li>
@@ -70,12 +77,19 @@
   <div id='firstTimeViewer' class="container">
     <div class="row valign-wrapper valign">
       <div class="col s12 m12 l12 center-align">
-        <form>
+        <form onsubmit="submitPhoto()">
           <span>
           Drag Photo to Upload or
           </span>
           <label for="upload_photo[]" style="color:black">Upload a Photo</label>
-          <input type="file" name="upload_photo" id="upload_photo" multiple>
+          <input type="file" name="upload_photo" id="upload_photo" accept="image/*">
+          <input type="submit" id="submitButton" hidden>
+
+
+
+
+
+
 
         </form>
       </div>
@@ -91,54 +105,8 @@
       <div id='carouselDiv' class="carousel col s12 m12 l12" hidden>
 
       </div>
-
-      <!-- <div class="carousel">
-        <a class="carousel-item" href="#one!"><img src="https://placekitten.com/g/200/300"></a>
-        <a class="carousel-item" href="#two!"><img src="https://placekitten.com/g/200/300"></a>
-        <a class="carousel-item" href="#three!"><img src="https://placekitten.com/g/200/300"></a>
-        <a class="carousel-item" href="#four!"><img src="https://placekitten.com/g/200/300"></a>
-        <a class="carousel-item" href="#five!"><img src="https://placekitten.com/g/200/300"></a>
-      </div> -->
     </div>
   </div>
-  <!--JavaScript at end of body for optimized loading-->
-  <!-- Old Code from attempt to tie node into the page operation -->
-  <!-- <script type="text/javascript" src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
-
-  <!-- Old Code for Google API for gdrive -->
-  <!-- <script src="https://apis.google.com/js/api.js"></script> -->
-  <!-- script for inoperable oauth for gdrive -->
-  <!-- <script>
-  /**
-   * Sample JavaScript code for drive.files.list
-   * See instructions for running APIs Explorer code samples locally:
-   * https://developers.google.com/explorer-help/guides/code_samples#javascript
-   */
-
-  function authenticate() {
-    return gapi.auth2.getAuthInstance()
-        .signIn({scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.photos.readonly https://www.googleapis.com/auth/drive.readonly"})
-        .then(function() { console.log("Sign-in successful"); },
-              function(err) { console.error("Error signing in", err); });
-  }
-  function loadClient() {
-    return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
-        .then(function() { console.log("GAPI client loaded for API"); },
-              function(err) { console.error("Error loading GAPI client for API", err); });
-  }
-  // Make sure the client is loaded and sign-in is complete before calling this method.
-  function execute() {
-    return gapi.client.drive.files.list({})
-        .then(function(response) {
-                // Handle the results here (response.result has the parsed body).
-                console.log("Response", response);
-              },
-              function(err) { console.error("Execute error", err); });
-  }
-  gapi.load("client:auth2", function() {
-    gapi.auth2.init({client_id: "193350252129-oaqntqje8utmmh9djnp20jatjtt7aur3.apps.googleusercontent.com"});
-  });
-</script> -->
 </body>
 
 </html>

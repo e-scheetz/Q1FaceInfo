@@ -25,13 +25,13 @@
     <div class="modal-content center-align">
       <h1>Welcome</h1>
       <br>
-      <span>
+      <h4>
         <!-- NOTE: Add appropriate context inf here -->
-        Click anywhere outside this bubble, or any others like it, to dismiss this prompt.
-      </span>
+        Please enter a username on the line below.
+      </h4>
       <br>
       <form onsubmit="saveUserInfo()">
-        <label for="userName" style="color:black">Please enter a username on the line below</label>
+        <label for="userName" style="color:black">Click anywhere outside this prompt to dismiss it.</label>
         <input style="text-align:center" type="text" name="usrName">
         <br>
         <input type="submit" name="submit">
@@ -41,6 +41,16 @@
 
   <!-- site information -->
   <div id="helpModal" class="modal valign-wrapper backgroundGradientTwo">
+    <div class="modal-content center-align">
+      <span>
+        <!-- NOTE: Add appropriate context inf here -->
+        TBD
+      </span>
+    </div>
+  </div>
+
+  <!-- Storage Warning -->
+  <div id="warnModal" class="modal valign-wrapper backgroundGradientTwo">
     <div class="modal-content center-align">
       <span>
         <!-- NOTE: Add appropriate context inf here -->
@@ -60,16 +70,15 @@
   <!-- modal2: for successive image uploads, preview and accept or cancel -->
   <div id="modal2" class="modal valign-wrapper center-align backgroundGradientTwo">
     <div class="modal-content">
-      <canvas height="512" width="512" id="canvas"/>
+      <canvas height="512" width="512" id="canvas1"/>
     </div>
-    <!-- <div class="modal-footer"> -->
       <div class="row">
         <div class="col s12 m12 l12 center-align">
           <a class="btn" onclick="remoteClick2(event)">
             <i class="material-icons">add_circle</i>
           </a>
-          <a class="btn">
-            <i class="material-icons" onclick="closeModal2()">remove_circle</i>
+          <a class="btn" onclick="closeModal2()">
+            <i class="material-icons">remove_circle</i>
           </a>
         </div>
       </div>
@@ -86,7 +95,7 @@
         </h4>
       </div>
       <div class="col s10 m10 l10 valign center-align">
-        <h1 class="valign" style="padding-bottom: 20px; font-family: 'Amatic SC', cursive">Face Analysis</h1>
+        <h1 class="valign" style="padding-bottom: 20px; font-family: 'Amatic SC', cursive">photoCache</h1>
       </div>
       <div class="col s1 m1 l1">
         <span>Photo Library</span>
@@ -136,22 +145,9 @@
           <label for="upload_photo[]" style="color:black">Upload a Photo</label>
           <input type="file" name="upload_photo" id="upload_photo" accept="image/*" click="theHollowPlace()" multiple>
           <input type="submit" id="submitButton" hidden>
-
-
-
-
-
-
-
         </form>
       </div>
     </div>
-    <!-- original place for file preview; currently under construction -->
-    <!-- <div class="row valign-wrapper" id='tmpOutput'>
-      <div class="col s12 m12 l12 valign center-align">
-
-      </div>
-    </div> -->
   </div>
   <div id="enCDiv" class="container" hidden>
     <div class="row valign-wrapper">

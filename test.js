@@ -300,13 +300,16 @@ function deleteSingleImage(){
 // cleaning handleFiles
 function handleFiles(e){
   let length = e.target.files.length
+  let ele = document.getElementById('modal2').children[0]
   for (let i = 1; i < length; i++){
     // write code to canvas area adding more canvases need dynamic id's = `canvas${i+1}`
+    ele.innerHTML += `<canvas height="512" width="512" id="canvas${i+1}"/>`
   }
   for (let i = 0; i < length; i++){
     // write to canvases (will need to change HTML id canvas to canvas1)
     handleFiles2(e, i)
   }
+  ele.innerHTML = `<canvas height="512" width="512" id="canvas1"/>`
 }
 function handleFiles2(e, i) {
   let ctx = document.getElementById(`canvas${i+1}`).getContext('2d');
@@ -327,3 +330,21 @@ function handleFiles2(e, i) {
     }
   }
 }
+
+// newPhoto cleanup
+function newPhoto() {
+  let i = 0
+  let img
+  while (document.getElementById(`canvas${i+1}`)){
+    img = document.getElementById('canvas').toDataURL()
+    storedPhotos.push(img)
+    storeData()
+    return storedPhotos
+  }
+}
+
+
+// clear the input type file
+document.getElementById('upload_photo').value = ""
+
+// error message

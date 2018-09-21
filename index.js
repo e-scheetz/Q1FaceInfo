@@ -164,33 +164,42 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function handleFiles(e) {
-  let ctx = document.getElementById('canvas').getContext('2d');
-  let url
-  let img
-  for (let i = 0; i < e.target.files.length; i++) {
-    url = URL.createObjectURL(e.target.files[i]);
-    img = new Image();
-    img.src = url;
-    img.onload = function() {
-      let tmp = [img.height, img.width]
-      let dI = createConstraints(tmp, ctx)
-      if (typeof dI == 'string') {
-        // modal activation with image too small then return to kill the function
-      } else {
-        let instance2 = M.Modal.getInstance(modal2)
-        instance2.open()
-        ctx.drawImage(img, dI.sx, dI.sy, dI.sWidth, dI.sHeight, dI.dx, dI.dy, dI.dWidth, dI.dHeight)
-        // // NOTE: mp commmented out to keep submit button handy
-        // document.getElementById('submitButton').hidden = false
-      }
-      // while (M.Modal.getInstance(modal2).isOpen){}
+function handleFiles(e){
+  let length = e.target.files.length
+  let ele = document.getElementById('modal2').children[0]
+  for (let i = 1; i < length; i++){
+    // write code to canvas area adding more canvases need dynamic id's = `canvas${i+1}`
+    ele.innerHTML += `<canvas height="512" width="512" id="canvas${i+1}"/>`
+  }
+  for (let i = 0; i < length; i++){
+    // write to canvases (will need to change HTML id canvas to canvas1)
+    handleFiles2(e, i)
+  }
+}
+function handleFiles2(e, i) {
+  let ctx = document.getElementById(`canvas${i+1}`).getContext('2d');
+  let url = URL.createObjectURL(e.target.files[i]);
+  let img = new Image();
+  img.src = url;
+  img.onload = function() {
+    let tmp = [img.height, img.width]
+    let dI = createConstraints(tmp, ctx)
+    if (typeof dI == 'string') {
+      // modal activation with image too small then return to kill the function
+    } else {
+      let instance2 = M.Modal.getInstance(modal2)
+      instance2.open()
+      ctx.drawImage(img, dI.sx, dI.sy, dI.sWidth, dI.sHeight, dI.dx, dI.dy, dI.dWidth, dI.dHeight)
+      // // NOTE: mp commmented out to keep submit button handy
+      // document.getElementById('submitButton').hidden = false
     }
   }
 }
 
 function submitPhoto() {
+  let ele = document.getElementById('modal2').children[0]
   newPhoto()
+  ele.innerHTML = `<canvas height="512" width="512" id="canvas1"></canvas>`
   checkLocalStorage()
 }
 
@@ -287,9 +296,18 @@ function unhideCarousel() {
 // function that compresses and stores new photos
 // NOTE: perhaps update a "progress bar" to show how much space is left in localStorage
 function newPhoto() {
-  let img = document.getElementById('canvas').toDataURL()
-  storedPhotos.push(img)
+  let i = 0
+  let img = document.getElementById(`canvas${i+1}`)
+  let dataURL
+  while (document.getElementById(`canvas${i+2}`) && bump()){
+    img = document.getElementById(`canvas${i+1}`)
+    dataURL = img.toDataURL()
+    storedPhotos.push(dataURL)
+    i++
+  }
   storeData()
+  let ele = document.getElementById('modal2').children[0]
+  ele.innerHTML = `<canvas height="512" width="512" id="canvas1"/>`
   return storedPhotos
 }
 
@@ -299,6 +317,7 @@ function storeData() {
     result.push(LZString.compress(storedPhotos[i].replace(/^data:image\/(png|jpg);base64,/, "")))
   }
   localStorage.setItem('storedPhotos', JSON.stringify(result))
+  bump()
 }
 //function to allow upload from toolbar
 
@@ -308,11 +327,13 @@ function updateProgress() {
   let percent = Math.floor(storageAmt / 5 * 100)
   let progressBar = document.getElementById('progressBar')
   let amountStored = document.getElementById('amountStored')
-  if (percent === '0.00'){
-    percent = 0
+  if (parseInt(percent) < 1){
+    progressBar.style.width = '0%'
+    amountStored.innerText = '0MB'
+  }else{
+    progressBar.style.width = `${percent}%`
+    amountStored.innerText = `${storageAmt}MB`
   }
-  progressBar.style.width = `${percent}%`
-  amountStored.innerText = `${storageAmt}MB`
   // console.log(`${storageAmt}MB @ ${percent}%`)
 }
 
@@ -340,6 +361,9 @@ let timeout
 
 function timeoutFunc(event) {
   timeout = setTimeout(remoteClick1, 500)
+}
+function timeoutFunc2(event) {
+  timeout = setTimeout(theHollowPlace, 200)
 }
 // pushButton remote 1
 function remoteClick1(event) {
@@ -406,6 +430,7 @@ function clearLocalStorage() {
 function closeModal2() {
   let instance = M.Modal.getInstance(modal2)
   instance.close()
+  document.getElementById('upload_photo').value = ""
 }
 
 function deleteSingleImage() {
@@ -419,4 +444,42 @@ function deleteSingleImage() {
   checkLocalStorage()
   let elems4 = document.querySelectorAll('.carousel');
   let instances4 = M.Carousel.init(elems4, {});
+}
+
+function bumpProgress(){
+  let storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2) / 1048576).toFixed(2)
+  let percent = Math.floor(storageAmt / 5 * 100)
+  if (percent > 100){
+    percent = 100
+  }
+  let ele = document.getElementById('warnModal').children[0].children[0]
+  if (percent > 75){
+    ele.innerText = `Please be aware you have used over 75% of localStorage. You are currently using ${percent}% of all available space.`
+    return false
+  }else if (percent > 100){
+    ele.innerText = `Please be aware you have used all of localStorage. You may consider removing an older picture if you wish to add a new picture.`
+    return false
+  }else{
+    ele.innerText = ``
+    return true
+  }
+}
+
+function bump(){
+  let ele = document.getElementById('warnModal').children[0].children[0]
+  let remote1 = document.getElementById('submitButton')
+  let remote2 = document.getElementById('modal2').children[1].children[0].children[0].children[0]
+  let tmp = bumpProgress()
+  if (ele.innerText === `Please be aware you have used all of localStorage. You may consider removing an older picture if you wish to add a new picture.`){
+    remote1.disabled = true
+    remote2.disabled = true
+  }else{
+    remote1.disabled = false
+    remote2.disabled = false
+  }
+  if(!tmp){
+    let instance = M.Modal.getInstance(warnModal)
+    instance.open()
+  }
+  return tmp
 }

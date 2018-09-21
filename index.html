@@ -20,22 +20,72 @@
 
 <body class="backgroundGradientTwo" style="min-height: 100%; height: 100%">
 
+  <!-- firstVisitModal -->
+  <div id="firstVisitModal" class="modal valign-wrapper backgroundGradientTwo">
+    <div class="modal-content center-align">
+      <h1>Welcome</h1>
+      <br>
+      <span>
+        <!-- NOTE: Add appropriate context inf here -->
+        Click anywhere outside this bubble, or any others like it, to dismiss this prompt.
+      </span>
+      <br>
+      <form onsubmit="saveUserInfo()">
+        <label for="userName" style="color:black">Please enter a username on the line below</label>
+        <input style="text-align:center" type="text" name="usrName">
+        <br>
+        <input type="submit" name="submit">
+      </form>
+    </div>
+  </div>
 
-  <div id="modal1" class="modal">
-    <div class="modal-content">
+  <!-- site information -->
+  <div id="helpModal" class="modal valign-wrapper backgroundGradientTwo">
+    <div class="modal-content center-align">
+      <span>
+        <!-- NOTE: Add appropriate context inf here -->
+        TBD
+      </span>
+    </div>
+  </div>
+
+  <!-- modal1: reporting that an upload is too small and cannot be used -->
+  <div id="modal1" class="modal valign-wrapper backgroundGradientTwo">
+    <div class="modal-content center-align">
       <h4>Error:</h4>
       <p>Photo Too Small. Min resolution supported: 512x512px</p>
     </div>
-    <div class="modal-footer">
-      <!-- <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a> -->
+  </div>
+
+  <!-- modal2: for successive image uploads, preview and accept or cancel -->
+  <div id="modal2" class="modal valign-wrapper center-align backgroundGradientTwo">
+    <div class="modal-content">
+      <canvas height="512" width="512" id="canvas"/>
     </div>
+    <!-- <div class="modal-footer"> -->
+      <div class="row">
+        <div class="col s12 m12 l12 center-align">
+          <a class="btn" onclick="remoteClick2(event)">
+            <i class="material-icons">add_circle</i>
+          </a>
+          <a class="btn">
+            <i class="material-icons" onclick="closeModal2()">remove_circle</i>
+          </a>
+        </div>
+      </div>
+
+    <!-- </div> -->
   </div>
 
   <!--Header / Utility toolbar-->
   <div class="container-wrapper">
 
     <div class="row valign-wrapper valign center-align backgroundGradientOne">
-      <div class="col s11 m11 l11 valign center-align">
+      <div class="col s1 m1 l1 center-align">
+        <h4 style="padding-bottom: 20px; font-family: 'Amatic SC', cursive" id="usrNameH4">
+        </h4>
+      </div>
+      <div class="col s10 m10 l10 valign center-align">
         <h1 class="valign" style="padding-bottom: 20px; font-family: 'Amatic SC', cursive">Face Analysis</h1>
       </div>
       <div class="col s1 m1 l1">
@@ -52,22 +102,27 @@
         <ul class="backgroundGradientOne">
           <li>
             <a class="btn-floating">
-            <i id="upload_btn" class="tooltipped material-icons" data-position="top" data-tooltip="Upload Photo">file_upload</i>
+            <i id="upload_btn" class="tooltipped material-icons" data-position="top" data-tooltip="Upload Photo" onclick="timeoutFunc(event)">file_upload</i>
           </a>
           </li>
           <li>
             <a class="btn-floating">
-            <i class="material-icons tooltipped" data-position="top" data-tooltip="Take Photo" >camera</i>
+            <i class="material-icons tooltipped" data-position="top" data-tooltip="Change User Name" onclick="editUsrName()">edit</i>
           </a>
           </li>
           <li>
             <a class="btn-floating">
-            <i class="material-icons tooltipped" data-position="top"  data-tooltip="Photo List">list</i>
+            <i class="material-icons tooltipped" data-position="top"  data-tooltip="Delete Selected Photo" onclick="deleteSingleImage()">delete</i>
           </a>
           </li>
           <li>
             <a class="btn-floating">
-            <i class="material-icons tooltipped" data-position="top"  data-tooltip="Delete">delete</i>
+            <i class="material-icons tooltipped" data-position="top"  data-tooltip="Delete All Photos" onclick="clearLocalStorage()">delete_sweep</i>
+          </a>
+          </li>
+          <li>
+            <a class="btn-floating">
+            <i class="material-icons tooltipped" data-position="top"  data-tooltip="Help" onclick="openHelp()">help</i>
           </a>
           </li>
         </ul>
@@ -78,11 +133,8 @@
     <div class="row valign-wrapper valign">
       <div class="col s12 m12 l12 center-align">
         <form onsubmit="submitPhoto()">
-          <span>
-          Drag Photo to Upload or
-          </span>
           <label for="upload_photo[]" style="color:black">Upload a Photo</label>
-          <input type="file" name="upload_photo" id="upload_photo" accept="image/*">
+          <input type="file" name="upload_photo" id="upload_photo" accept="image/*" click="theHollowPlace()" multiple>
           <input type="submit" id="submitButton" hidden>
 
 
@@ -94,16 +146,23 @@
         </form>
       </div>
     </div>
-    <div class="row valign-wrapper" id='tmpOutput'>
+    <!-- original place for file preview; currently under construction -->
+    <!-- <div class="row valign-wrapper" id='tmpOutput'>
       <div class="col s12 m12 l12 valign center-align">
-        <canvas height="500" width="500" id="canvas"/>
-      </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="row valign-wrapper">
-      <div id='carouselDiv' class="carousel col s12 m12 l12" hidden>
 
+      </div>
+    </div> -->
+  </div>
+  <div id="enCDiv" class="container" hidden>
+    <div class="row valign-wrapper">
+      <div class="col s1 m1 l1 center-align material-icons">
+        arrow_back_ios
+      </div>
+      <div id='carouselDiv' class="carousel col s10 m10 l10">
+
+      </div>
+      <div class="col s1 m1 l1 center-align material-icons">
+        arrow_forward_ios
       </div>
     </div>
   </div>

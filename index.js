@@ -1,4 +1,113 @@
 let storedPhotos
+let usrName
+let current
+const numObj = {
+  'one': 0,
+  'two': 1,
+  'three': 2,
+  'four': 3,
+  'five': 4,
+  'eight': 7,
+  'eighteen': 17,
+  'eighty': 79,
+  'eighty-eight': 87,
+  'eighty-five': 84,
+  'eighty-four': 83,
+  'eighty-nine': 88,
+  'eighty-one': 80,
+  'eighty-seven': 86,
+  'eighty-six': 85,
+  'eighty-three': 82,
+  'eighty-two': 81,
+  'eleven': 10,
+  'fifteen': 14,
+  'fifty': 49,
+  'fifty-eight': 57,
+  'fifty-five': 54,
+  'fifty-four': 53,
+  'fifty-nine': 58,
+  'fifty-one': 50,
+  'fifty-seven': 56,
+  'fifty-six': 55,
+  'fifty-three': 52,
+  'fifty-two': 51,
+  'five': 4,
+  'forty': 39,
+  'forty-eight': 47,
+  'forty-five': 44,
+  'forty-four': 43,
+  'forty-nine': 48,
+  'forty-one': 40,
+  'forty-seven': 46,
+  'forty-six': 45,
+  'forty-three': 42,
+  'forty-two': 41,
+  'four': 3,
+  'fourteen': 13,
+  'nine': 8,
+  'nineteen': 18,
+  'ninety': 89,
+  'ninety-eight': 97,
+  'ninety-five': 94,
+  'ninety-four': 93,
+  'ninety-nine': 98,
+  'ninety-one': 90,
+  'ninety-seven': 96,
+  'ninety-six': 95,
+  'ninety-three': 92,
+  'ninety-two': 91,
+  'one': 0,
+  'one-hundred': 99,
+  'seven': 6,
+  'seventeen': 16,
+  'seventy': 69,
+  'seventy-eight': 77,
+  'seventy-five': 74,
+  'seventy-four': 73,
+  'seventy-nine': 78,
+  'seventy-one': 70,
+  'seventy-seven': 76,
+  'seventy-six': 75,
+  'seventy-three': 72,
+  'seventy-two': 71,
+  'six': 5,
+  'sixteen': 15,
+  'sixty': 59,
+  'sixty-eight': 67,
+  'sixty-five': 64,
+  'sixty-four': 63,
+  'sixty-nine': 68,
+  'sixty-one': 60,
+  'sixty-seven': 66,
+  'sixty-six': 65,
+  'sixty-three': 62,
+  'sixty-two': 61,
+  'ten': 9,
+  'thirteen': 12,
+  'thirty': 29,
+  'thirty-eight': 37,
+  'thirty-five': 34,
+  'thirty-four': 33,
+  'thirty-nine': 38,
+  'thirty-one': 30,
+  'thirty-seven': 36,
+  'thirty-six': 35,
+  'thirty-three': 32,
+  'thirty-two': 31,
+  'three': 2,
+  'twelve': 11,
+  'twenty': 19,
+  'twenty-eight': 27,
+  'twenty-five': 24,
+  'twenty-four': 23,
+  'twenty-nine': 28,
+  'twenty-one': 20,
+  'twenty-seven': 26,
+  'twenty-six': 25,
+  'twenty-three': 22,
+  'twenty-two': 21,
+  'two': 1
+}
 var URL = window.webkitURL || window.URL;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -7,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Check file system for stringified array in localStorage and if one is not present, create an array, strinify it, and store it in localStorage
   checkLocalStorage()
+  loadUserData()
 
   // var elems = document.querySelectorAll('.carousel');
   // let options = {
@@ -25,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let elems3 = document.querySelectorAll('.modal');
   let instances3 = M.Modal.init(elems3);
 
-  if (storedPhotos.length > 0){
+  if (storedPhotos.length > 0) {
     let elems4 = document.querySelectorAll('.carousel');
     let instances4 = M.Carousel.init(elems4, {});
   }
@@ -33,28 +143,53 @@ document.addEventListener('DOMContentLoaded', function() {
   // event listeners
   let input = document.getElementById('upload_photo')
   input.addEventListener('change', handleFiles)
+  // code to add event listener
+  // some code moved to lower functions
   // let upload = document.getElementById('upload_btn')
-  // upload.addEventListener('change', handleFiles)
+  // upload.addEventListener("click", setTimeout(remoteClick1, 500))
+
+  // modified https://codepen.io/anon/pen/Lyvwoj
+  if (storedPhotos.length > 0){
+    $(".carousel").carousel({
+      onCycleTo: function(slide) {
+        current = slide.id
+        current = current.slice(1, current.length - 1)
+        return current
+      }
+    });
+  }
+
+  if (typeof storedPhotos[0] === 'undefined' && usrName.length === 0) {
+    firstVisit()
+  }
 });
 
 function handleFiles(e) {
-  var ctx = document.getElementById('canvas').getContext('2d');
-  var url = URL.createObjectURL(e.target.files[0]);
-  var img = new Image();
-  img.src = url;
-  img.onload = function() {
-    let tmp = [img.height, img.width]
-    let dI = createConstraints(tmp, ctx)
-    if (typeof dI == 'string') {
-      // modal activation with image too small then return to kill the function
-    } else {
-      ctx.drawImage(img, dI.sx, dI.sy, dI.sWidth, dI.sHeight, dI.dx, dI.dy, dI.dWidth, dI.dHeight)
-      document.getElementById('submitButton').hidden = false
+  let ctx = document.getElementById('canvas').getContext('2d');
+  let url
+  let img
+  for (let i = 0; i < e.target.files.length; i++) {
+    url = URL.createObjectURL(e.target.files[i]);
+    img = new Image();
+    img.src = url;
+    img.onload = function() {
+      let tmp = [img.height, img.width]
+      let dI = createConstraints(tmp, ctx)
+      if (typeof dI == 'string') {
+        // modal activation with image too small then return to kill the function
+      } else {
+        let instance2 = M.Modal.getInstance(modal2)
+        instance2.open()
+        ctx.drawImage(img, dI.sx, dI.sy, dI.sWidth, dI.sHeight, dI.dx, dI.dy, dI.dWidth, dI.dHeight)
+        // // NOTE: mp commmented out to keep submit button handy
+        // document.getElementById('submitButton').hidden = false
+      }
+      // while (M.Modal.getInstance(modal2).isOpen){}
     }
   }
 }
 
-function submitPhoto () {
+function submitPhoto() {
   newPhoto()
   checkLocalStorage()
 }
@@ -72,7 +207,7 @@ function createConstraints(tmp, ctx) {
     dHeight: 512
   }
   if (tmp[0] < 512 || tmp[1] < 512) {
-    var instance = M.Modal.getInstance(elem)
+    let instance = M.Modal.getInstance(modal1);
     instance.open()
     return `Image resolution of ${tmp[1]}x${tmp[0]}px. Min-resolution is 512x512px.`
   } else if (tmp[0] == tmp[1]) {
@@ -101,6 +236,7 @@ function checkLocalStorage() {
   storedPhotos = JSON.parse(localStorage.getItem('storedPhotos'))
   if (storedPhotos == null) {
     storedPhotos = []
+    firstTimeModal()
   }
   if (storedPhotos[0] !== undefined) {
     let tmp = []
@@ -109,7 +245,7 @@ function checkLocalStorage() {
     }
     storedPhotos = tmp
     populateCarousel()
-    updateProgress ()
+    updateProgress()
   }
   return storedPhotos
 }
@@ -118,11 +254,15 @@ function checkLocalStorage() {
 function populateCarousel() {
   // hide until carousel is ready
   unhideCarousel()
-  let numArr = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"]
+  let tmp = {}
+  let key
+  for (key in numObj) {
+    tmp[`${numObj[key]}`] = key
+  }
   let carouselDiv = document.getElementById('carouselDiv')
   carouselDiv.innerHTML = ""
-  for (let i = 0; i < storedPhotos.length; i++){
-    carouselDiv.innerHTML += `<a class="carousel-item" href="#${numArr[i]}!"><img src="${storedPhotos[i]}"></a>`
+  for (let i = 0; i < storedPhotos.length; i++) {
+    carouselDiv.innerHTML += `<a id="%${tmp[i]}%" class="carousel-item" href="#${tmp[i]}!"><img src="${storedPhotos[i]}"></a>`
   }
 }
 
@@ -130,7 +270,7 @@ function populateCarousel() {
 function unhideCarousel() {
   let firstTimeViewer = document.getElementById('firstTimeViewer')
   firstTimeViewer.hidden = true
-  let carousel = document.getElementById('carouselDiv')
+  let carousel = document.getElementById('enCDiv')
   carousel.hidden = false
 }
 // function to return a parsed canvas img to link to carousel elements
@@ -153,9 +293,9 @@ function newPhoto() {
   return storedPhotos
 }
 
-function storeData () {
+function storeData() {
   let result = []
-  for (let i=0; i < storedPhotos.length; i++){
+  for (let i = 0; i < storedPhotos.length; i++) {
     result.push(LZString.compress(storedPhotos[i].replace(/^data:image\/(png|jpg);base64,/, "")))
   }
   localStorage.setItem('storedPhotos', JSON.stringify(result))
@@ -163,12 +303,120 @@ function storeData () {
 //function to allow upload from toolbar
 
 // function to set % on progressBar and total used in amountStored
-function updateProgress () {
-  let storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2)/1048576).toFixed(2)
-  let percent = Math.floor(storageAmt/5*100)
+function updateProgress() {
+  let storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2) / 1048576).toFixed(2)
+  let percent = Math.floor(storageAmt / 5 * 100)
   let progressBar = document.getElementById('progressBar')
   let amountStored = document.getElementById('amountStored')
+  if (percent === '0.00'){
+    percent = 0
+  }
   progressBar.style.width = `${percent}%`
   amountStored.innerText = `${storageAmt}MB`
   // console.log(`${storageAmt}MB @ ${percent}%`)
+}
+
+// 12:24 :: KooiInc @ https://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
+// function eventFire(el, etype){
+//   if (el.fireEvent) {
+//     el.fireEvent('on' + etype);
+//   } else {
+//     var evObj = document.createEvent('Events');
+//     evObj.initEvent(etype, true, false);
+//     el.dispatchEvent(evObj);
+//   }
+//   console.log(el.fireEvent)
+// }
+// to trigger
+// eventFire(document.getElementById('mytest1'), 'click');
+
+// the theHollowPlace ... why? because it's a terrible funny idea but really I'm wondering if there needs to be a click event for the input in order for it to be tricked into being clicked
+function theHollowPlace() {
+  // BEHOLD! IT IS HOLLOW
+}
+
+// timeoutFunction
+let timeout
+
+function timeoutFunc(event) {
+  timeout = setTimeout(remoteClick1, 500)
+}
+// pushButton remote 1
+function remoteClick1(event) {
+  // Cancel the default action, if needed
+  // event.preventDefault();
+  // Number 13 is the "Enter" key on the keyboard
+  document.getElementById("upload_photo").click();
+}
+
+function remoteClick2(event) {
+  // Cancel the default action, if needed
+  event.preventDefault();
+  // Number 13 is the "Enter" key on the keyboard
+  document.getElementById("submitButton").click();
+}
+
+function saveUserInfo() {
+  let usrName = document.getElementsByName('usrName')[0].value
+  localStorage.setItem('usrName', `${usrName}`)
+  let instance = M.Modal.getInstance(firstVisitModal)
+  instance.close()
+}
+
+function loadUserData() {
+  usrName = localStorage.getItem('usrName')
+  if (typeof usrName !== 'string') {
+    usrName = ""
+  }
+  let ele = document.getElementById('usrNameH4')
+  if (usrName !== undefined) {
+    ele.innerText = usrName
+  }
+  return usrName
+}
+
+async function firstVisit() {
+  let instance = await M.Modal.getInstance(firstVisitModal)
+  instance.open()
+}
+
+
+function editUsrName() {
+  let instance = M.Modal.getInstance(firstVisitModal)
+  instance.open()
+}
+
+function openHelp() {
+  let instance = M.Modal.getInstance(helpModal)
+  instance.open()
+}
+
+function clearLocalStorage() {
+  localStorage.setItem('storedPhotos', JSON.stringify([]))
+  storedPhotos = []
+  updateProgress()
+  populateCarousel()
+  let carousel = document.getElementById('enCDiv')
+  carousel.hidden = true
+  let viewer = document.getElementById('firstTimeViewer')
+  viewer.hidden = false
+  return storedPhotos
+}
+
+function closeModal2() {
+  let instance = M.Modal.getInstance(modal2)
+  instance.close()
+}
+
+function deleteSingleImage() {
+  let variable = document.getElementById(`%${current}%`).children[0].src
+  for (let i = 0; i < storedPhotos.length; i++) {
+    if (variable === storedPhotos[i]) {
+      storedPhotos.splice(i, 1)
+    }
+  }
+  storeData()
+  checkLocalStorage()
+  let elems4 = document.querySelectorAll('.carousel');
+  let instances4 = M.Carousel.init(elems4, {});
 }

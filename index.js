@@ -399,11 +399,10 @@ function loadUserData() {
   return usrName
 }
 
-async function firstVisit() {
+function firstVisit() {
   let instance = M.Modal.getInstance(firstVisitModal)
-  return instance
+  instance.open()
 }
-firstVisit.then(instance.open())
 
 
 function editUsrName() {

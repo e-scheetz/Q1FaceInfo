@@ -298,9 +298,18 @@ function deleteSingleImage(){
 }
 
 // cleaning handleFiles
-
-function handleFiles(e) {
-  let ctx = document.getElementById('canvas').getContext('2d');
+function handleFiles(e){
+  let length = e.target.files.length
+  for (let i = 1; i < length; i++){
+    // write code to canvas area adding more canvases need dynamic id's = `canvas${i+1}`
+  }
+  for (let i = 0; i < length; i++){
+    // write to canvases (will need to change HTML id canvas to canvas1)
+    handleFiles2(e, i)
+  }
+}
+function handleFiles2(e, i) {
+  let ctx = document.getElementById(`canvas${i+1}`).getContext('2d');
   let url = URL.createObjectURL(e.target.files[0]);
   let img = new Image();
   img.src = url;

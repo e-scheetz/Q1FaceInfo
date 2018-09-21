@@ -401,6 +401,7 @@ function loadUserData() {
 
 async function firstVisit() {
   let instance = M.Modal.getInstance(firstVisitModal)
+  return instance
 }
 firstVisit.then(instance.open())
 

@@ -399,9 +399,9 @@ function loadUserData() {
   return usrName
 }
 
-function firstVisit() {
-  let instance = M.Modal.getInstance(firstVisitModal)
-  instance.open()
+async function firstVisit() {
+  let instance = await M.Modal.getInstance(firstVisitModal)
+  await instance.open()
 }
 
 

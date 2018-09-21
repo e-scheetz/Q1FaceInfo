@@ -245,7 +245,7 @@ function checkLocalStorage() {
   storedPhotos = JSON.parse(localStorage.getItem('storedPhotos'))
   if (storedPhotos == null) {
     storedPhotos = []
-    firstTimeModal()
+    firstVisit()
   }
   if (storedPhotos[0] !== undefined) {
     let tmp = []

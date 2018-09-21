@@ -400,9 +400,9 @@ function loadUserData() {
 }
 
 async function firstVisit() {
-  let instance = await M.Modal.getInstance(firstVisitModal)
-  instance.open()
+  let instance = M.Modal.getInstance(firstVisitModal)
 }
+firstVisit.then(instance.open())
 
 
 function editUsrName() {

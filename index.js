@@ -496,7 +496,9 @@ function closeModal2() {
 }
 
 function deleteSingleImage() {
-  let variable = document.getElementsByClassName('active')[1].children[0].src
+  let instance = M.FloatingActionButton.getInstance(document.querySelectorAll('.fixed-action-btn')[0]);
+  instance.close()
+  let variable = document.getElementsByClassName('active')[0].children[0].src
   for (let i = 0; i < storedPhotos.length; i++) {
     if (variable === storedPhotos[i]) {
       storedPhotos.splice(i, 1)
@@ -506,6 +508,7 @@ function deleteSingleImage() {
   checkLocalStorage()
   let elems4 = document.querySelectorAll('.carousel');
   let instances4 = M.Carousel.init(elems4, {});
+  instance.close()
 }
 
 function bumpProgress(){

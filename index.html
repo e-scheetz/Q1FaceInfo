@@ -43,6 +43,14 @@
     <div class="modal-content center-align">
       <span>
         <span style="font-size: 30px; font-family: 'Amatic SC', cursive">photoCache</span> is an interactive site for storing your favorite photos.
+        <br>
+        <br>
+        Use the toolbar to access various commands such as uploading a new photo, delete the currently viewed photo, remove all photos, or clear your profile entirely.
+        <br>
+        <br>
+        Uploaded photos are stored locally on your own machine and viewable in the photo carousel that is visible in the center of the screen if you have made any uploads.
+        <br><br>
+        <h6>Click anywhere outside this window to dismiss it.</h6>
       </span>
     </div>
   </div>
@@ -123,6 +131,11 @@
           <li>
             <a class="btn-floating">
             <i class="material-icons tooltipped" data-position="top"  data-tooltip="Delete All Photos" onclick="clearLocalStorage()">delete_sweep</i>
+          </a>
+          </li>
+          <li>
+            <a class="btn-floating">
+            <i class="material-icons tooltipped" data-position="top"  data-tooltip="Delete Profile" onclick="clearAllLocalStorage()">delete_forever</i>
           </a>
           </li>
           <li>

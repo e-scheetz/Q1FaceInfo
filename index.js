@@ -1,4 +1,4 @@
-let storedPhotos
+let storedPhotos = []
 let usrName
 let current
 const numObj = {
@@ -135,10 +135,10 @@ document.addEventListener('DOMContentLoaded', function() {
   let elems3 = document.querySelectorAll('.modal');
   let instances3 = M.Modal.init(elems3);
 
-  if (storedPhotos.length > 0) {
-    let elems4 = document.querySelectorAll('.carousel');
-    let instances4 = M.Carousel.init(elems4, {});
-  }
+  // if (storedPhotos.length > 0) {
+  //   let elems4 = document.querySelectorAll('.carousel');
+  //   let instances4 = M.Carousel.init(elems4, {});
+  // }
 
   // event listeners
   let input = document.getElementById('upload_photo')
@@ -162,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof storedPhotos[0] === 'undefined' && usrName.length === 0) {
     firstVisit()
   }
+  bump()
 });
 
 function handleFiles(e){
@@ -245,6 +246,7 @@ function checkLocalStorage() {
   storedPhotos = JSON.parse(localStorage.getItem('storedPhotos'))
   if (storedPhotos == null) {
     storedPhotos = []
+    localStorage.setItem('storedPhotos', JSON.stringify(storedPhotos))
     firstVisit()
   }
   if (storedPhotos[0] !== undefined) {
@@ -273,6 +275,10 @@ function populateCarousel() {
   for (let i = 0; i < storedPhotos.length; i++) {
     carouselDiv.innerHTML += `<a id="%${tmp[i]}%" class="carousel-item" href="#${tmp[i]}!"><img src="${storedPhotos[i]}"></a>`
   }
+  if (storedPhotos.length > 0) {
+    let elems4 = document.querySelectorAll('.carousel');
+    let instances4 = M.Carousel.init(elems4, {});
+  }
 }
 
 // hide first view elements and unhide carousel element
@@ -296,19 +302,46 @@ function unhideCarousel() {
 // function that compresses and stores new photos
 // NOTE: perhaps update a "progress bar" to show how much space is left in localStorage
 function newPhoto() {
+  let storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2) / 1048576).toFixed(2)
+  let percent = Math.floor(storageAmt / 5 * 100)
+  if (percent >= 100){
+    percent = 100
+    closeModal2()
+    bump()
+  }else if (percent < 1){
+    percent = 0
+  }
   let i = 0
   let img = document.getElementById(`canvas${i+1}`)
   let dataURL
-  while (document.getElementById(`canvas${i+2}`) && bump()){
-    img = document.getElementById(`canvas${i+1}`)
+  while (document.getElementById(`canvas${i+1}`) && percent < 100){
     dataURL = img.toDataURL()
     storedPhotos.push(dataURL)
     i++
+    img = document.getElementById(`canvas${i+1}`)
+    storeData()
+    storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2) / 1048576).toFixed(2)
+    percent = Math.floor(storageAmt / 5 * 100)
+    if (percent >= 100){
+      percent = 100
+      closeModal2()
+      bump()
+    }else if (percent < 1){
+      percent = 0
+    }
+    if (percent === 100){
+      let ele = document.getElementById('warnModal').children[0].children[0]
+      ele.innerText = `Please be aware that you have used ${percent}% of all available space. One or more photos may not have been imported.`
+      closeModal2()
+      let instance = M.Modal.getInstance(warnModal)
+      instance.open()
+      return
+    }
   }
-  storeData()
   let ele = document.getElementById('modal2').children[0]
   ele.innerHTML = `<canvas height="512" width="512" id="canvas1"/>`
   return storedPhotos
+  closeModal2()
 }
 
 function storeData() {
@@ -330,6 +363,9 @@ function updateProgress() {
   if (parseInt(percent) < 1){
     progressBar.style.width = '0%'
     amountStored.innerText = '0MB'
+  }else if (parseInt(percent) > 99){
+    progressBar.style.width = '100%'
+    amountStored.innerText = '5MB'
   }else{
     progressBar.style.width = `${percent}%`
     amountStored.innerText = `${storageAmt}MB`
@@ -367,15 +403,24 @@ function timeoutFunc2(event) {
 }
 // pushButton remote 1
 function remoteClick1(event) {
+  let storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2) / 1048576).toFixed(2)
+  let percent = Math.floor(storageAmt / 5 * 100)
+  if (percent >= 100){
+    percent = 100
+  }
+  if (percent === 100){
+    return
+  }else{
+    document.getElementById("upload_photo").click();
+  }
   // Cancel the default action, if needed
   // event.preventDefault();
   // Number 13 is the "Enter" key on the keyboard
-  document.getElementById("upload_photo").click();
 }
 
 function remoteClick2(event) {
   // Cancel the default action, if needed
-  event.preventDefault();
+  // event.preventDefault();
   // Number 13 is the "Enter" key on the keyboard
   document.getElementById("submitButton").click();
 }
@@ -385,6 +430,7 @@ function saveUserInfo() {
   localStorage.setItem('usrName', `${usrName}`)
   let instance = M.Modal.getInstance(firstVisitModal)
   instance.close()
+  loadUserData()
 }
 
 function loadUserData() {
@@ -448,38 +494,47 @@ function deleteSingleImage() {
 
 function bumpProgress(){
   let storageAmt = (((localStorage['storedPhotos'].length + storedPhotos.length) * 2) / 1048576).toFixed(2)
+  let remote1 = document.getElementById('submitButton')
+  let remote2 = document.getElementById('modal2').children[1].children[0].children[0].children[0]
   let percent = Math.floor(storageAmt / 5 * 100)
   if (percent > 100){
     percent = 100
   }
   let ele = document.getElementById('warnModal').children[0].children[0]
-  if (percent > 75){
+  if (percent === 100){
+    ele.innerText = `Please be aware you have used all of the available space in localStorage. You may consider removing an older picture if you wish to add a new picture.`
+    remote1.disabled = true
+    remote2.disabled = true
+      return false
+  }else if (percent > 75){
     ele.innerText = `Please be aware you have used over 75% of localStorage. You are currently using ${percent}% of all available space.`
-    return false
-  }else if (percent > 100){
-    ele.innerText = `Please be aware you have used all of localStorage. You may consider removing an older picture if you wish to add a new picture.`
+    remote1.disabled = false
+    remote2.disabled = false
     return false
   }else{
+    remote1.disabled = false
+    remote2.disabled = false
     ele.innerText = ``
     return true
   }
 }
 
 function bump(){
-  let ele = document.getElementById('warnModal').children[0].children[0]
-  let remote1 = document.getElementById('submitButton')
-  let remote2 = document.getElementById('modal2').children[1].children[0].children[0].children[0]
+  // let ele = document.getElementById('warnModal').children[0].children[0]
   let tmp = bumpProgress()
-  if (ele.innerText === `Please be aware you have used all of localStorage. You may consider removing an older picture if you wish to add a new picture.`){
-    remote1.disabled = true
-    remote2.disabled = true
-  }else{
-    remote1.disabled = false
-    remote2.disabled = false
-  }
-  if(!tmp){
+  if(tmp === false){
     let instance = M.Modal.getInstance(warnModal)
     instance.open()
   }
   return tmp
+}
+
+function clearAllLocalStorage() {
+  localStorage.clear()
+  let storedPhotos = []
+  localStorage.setItem('storedPhotos', JSON.stringify(storedPhotos))
+  bump()
+  loadUserData()
+  clearLocalStorage()
+  firstVisit()
 }

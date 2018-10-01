@@ -166,11 +166,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function handleFiles(e){
+  let instance = M.Modal.getInstance(modal2);
+  instance.open()
+  let screenSize = document.getElementById('modal2').offsetWidth
+  let newRatio = 512
+  if (parseInt(screenSize) < 600){
+    newRatio = (parseInt(screenSize)/100)*80
+    document.getElementById('canvas1').height = newRatio
+    document.getElementById('canvas1').width = newRatio
+  }
   let length = e.target.files.length
   let ele = document.getElementById('modal2').children[0]
   for (let i = 1; i < length; i++){
     // write code to canvas area adding more canvases need dynamic id's = `canvas${i+1}`
-    ele.innerHTML += `<canvas height="512" width="512" id="canvas${i+1}"/>`
+    ele.innerHTML += `<canvas height="${newRatio}" width="${newRatio}" id="canvas${i+1}"/>`
   }
   for (let i = 0; i < length; i++){
     // write to canvases (will need to change HTML id canvas to canvas1)
@@ -188,8 +197,8 @@ function handleFiles2(e, i) {
     if (typeof dI == 'string') {
       // modal activation with image too small then return to kill the function
     } else {
-      let instance2 = M.Modal.getInstance(modal2)
-      instance2.open()
+      // let instance2 = M.Modal.getInstance(modal2)
+      // instance2.open()
       ctx.drawImage(img, dI.sx, dI.sy, dI.sWidth, dI.sHeight, dI.dx, dI.dy, dI.dWidth, dI.dHeight)
       // // NOTE: mp commmented out to keep submit button handy
       // document.getElementById('submitButton').hidden = false
@@ -206,6 +215,7 @@ function submitPhoto() {
 
 // function that sets the constraints to automatically crop and resize the original
 function createConstraints(tmp, ctx) {
+
   let dI = {
     sx: 0,
     sy: 0,
@@ -215,6 +225,12 @@ function createConstraints(tmp, ctx) {
     dy: 0,
     dWidth: 512,
     dHeight: 512
+  }
+  let screenSize = document.getElementById('modal2').offsetWidth
+  if (screenSize < 600){
+    let newRatio = (parseInt(screenSize)/100)*80
+    dI.dWidth = newRatio
+    dI.dHeight = newRatio
   }
   if (tmp[0] < 512 || tmp[1] < 512) {
     let instance = M.Modal.getInstance(modal1);
